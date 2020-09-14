@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.xixiwan.platform.face.feign.order.mapper.OrderProductMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap"
+		type="com.xixiwan.platform.face.feign.order.entity.OrderProduct">
+		<result column="id" property="id" />
+		<result column="order_id" property="orderId" />
+		<result column="product_id" property="productId" />
+		<result column="product_number" property="productNumber" />
+		<result column="user_id" property="userId" />
+		<result column="name" property="name" />
+		<result column="pic_img" property="picImg" />
+		<result column="product_spec_number"
+			property="productSpecNumber" />
+		<result column="product_spec_name" property="productSpecName" />
+		<result column="price" property="price" />
+		<result column="score" property="score" />
+		<result column="buy_number" property="buyNumber" />
+		<result column="product_score" property="productScore" />
+		<result column="product_amount" property="productAmount" />
+		<result column="comment_status" property="commentStatus" />
+	</resultMap>
+
+	<!-- 通用查询结果列 -->
+	<sql id="Base_Column_List">
+		id, order_id, product_id, product_number, user_id, name,
+		pic_img,
+		product_spec_number, product_spec_name, price, score,
+		buy_number,
+		product_score, product_amount, comment_status
+	</sql>
+
+</mapper>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common :: common('锁屏')">
+</head>
+<script type="text/javascript">
+	$(function() {
+		parent.layer.open({
+			type : 2,
+			title : false,
+			area : [ (window.screen.width) + 'px', (window.screen.height) + 'px' ],
+			closeBtn : 0,
+			content : '/unlockScreen?refresh=true'
+		});
+	});
+</script>
+</html>

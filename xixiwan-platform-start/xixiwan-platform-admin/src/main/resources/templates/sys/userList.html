@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common :: common(${sysMenu.name})">
+</head>
+<!-- Content Header (Page header) -->
+<div th:replace="contentHeader"></div>
+<!-- Main content -->
+<section class="content">
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="box">
+				<div class="box-header">
+					<h3 class="box-title">条件搜索</h3>
+				</div>
+				<!-- /.box-header -->
+				<!-- form start -->
+				<form class="form-inline">
+					<div class="box-body">
+						<div class="form-group">
+							<label>创建时间 </label><input type="text" id="searchRangesDate"
+								class="form-control" placeholder="创建时间">
+						</div>
+						<div class="form-group">
+							<label>账号 </label><input type="text" id="searchUsername"
+								class="form-control" placeholder="账号">
+						</div>
+						<div class="form-group">
+							<label>名字 </label><input type="text" id="searchName"
+								class="form-control" placeholder="名字">
+						</div>
+					</div>
+					<!-- /.box-body -->
+					<div th:replace="boxFooter"></div>
+					<!-- /.box-footer -->
+				</form>
+				<div class="box-body">
+					<table id="userTable"></table>
+				</div>
+				<!-- /.box-body -->
+			</div>
+			<!-- /.box -->
+
+		</div>
+		<!-- /.col -->
+	</div>
+	<!-- /.row -->
+
+	<div id="editUserDiv" class="box" style="display: none">
+		<!-- form start -->
+		<form action="/sys/user/editUser">
+			<div class="box-body">
+				<input type="hidden" id="editId" name="id">
+				<div class="form-group">
+					<label>账号 </label><input type="text" id="editUsername"
+						class="form-control" placeholder="账号" readonly>
+				</div>
+				<div class="form-group">
+					<label>名字 </label><input type="text" id="editName" name="name"
+						class="form-control " placeholder="名字">
+				</div>
+				<div class="form-group">
+					<label>邮箱 </label><input type="text" id="editEmail" name="email"
+						class="form-control" placeholder="邮箱">
+				</div>
+				<div class="form-group">
+					<label>电话 </label><input type="text" id="editPhone" name="phone"
+						class="form-control" placeholder="电话">
+				</div>
+				<div class="form-group">
+					<label>生日 </label> <input type="text" id="editBirthday"
+						name="birthday" class="form-control" placeholder="生日">
+				</div>
+				<div class="form-group">
+					<label>性别 </label><input type="radio" name="sex" value="1" checked>
+					男 <input type="radio" name="sex" value="2"> 女
+
+				</div>
+				<div class="form-group">
+					<label>状态 </label><input type="radio" name="status" value="1"
+						checked> 正常 <input type="radio" name="status" value="2">
+					禁用<input type="radio" name="status" value="3"> 锁定<input
+						type="radio" name="status" value="4"> 删除
+
+				</div>
+			</div>
+			<!-- /.box-body -->
+			<div class="box-footer">
+				<div class="pull-right">
+					<button type="submit" class="btn btn-success">
+						<i class="fa fa-floppy-o" aria-hidden="true"></i> 保存
+					</button>
+				</div>
+			</div>
+			<!-- /.box-footer -->
+		</form>
+	</div>
+
+	<div id="authorityUserDiv" class="box" style="display: none">
+		<div class="box-body">
+			<input type="hidden" id="authorityId" name="id">
+			<div id="tree"></div>
+		</div>
+		<!-- /.box-body -->
+		<div class="box-footer">
+			<div class="pull-right">
+				<button type="button" id="authority_save" class="btn btn-success">
+					<i class="fa fa-floppy-o" aria-hidden="true"></i> 保存
+				</button>
+			</div>
+		</div>
+		<!-- /.box-footer -->
+	</div>
+</section>
+<script type="text/javascript">
+	var viewer = null;
+
+	var getTree = function(userid) {
+		var data;
+		$.ajax({
+			type : 'get',
+			url : '/sys/role/selectNodeList',
+			data : {
+				userid : userid,
+				status : 1
+			},
+			async : false,
+			success : function(result) {
+				data = result.data;
+			}
+		});
+		return data;
+	}
+
+	var refreshTreeview = function(userid) {
+		$('#tree').treeview({
+			data : getTree(userid),
+			showCheckbox : true
+		});
+	}
+
+	var refresh = function() {
+		layer.load();
+		$('#userTable').bootstrapTable('refresh', {
+			url : '/sys/user/selectPage'
+		});
+	}
+
+	var queryParams = function(params) {
+		params.rangesDate = $('#searchRangesDate').val();
+		params.username = $('#searchUsername').val();
+		params.name = $('#searchName').val();
+		return params;
+	}
+
+	var bootstrapTable = function() {
+		$('#userTable').bootstrapTable({
+			columns : [ {
+				checkbox : true
+			}, {
+				field : 'avatar',
+				title : '头像',
+				width : 100,
+				formatter : function(value, row, index) {
+					return '<a class="thumbnail"><img src='+value+'></div>';
+				}
+			}, {
+				field : 'username',
+				title : '账号',
+				sortable : true
+			}, {
+				field : 'name',
+				title : '名字',
+				sortable : true
+			}, {
+				field : 'email',
+				title : '邮箱',
+				width : 200,
+				sortable : true
+			}, {
+				field : 'phone',
+				title : '电话',
+				width : 160,
+				sortable : true
+			}, {
+				field : 'birthday',
+				title : '生日',
+				width : 100,
+				sortable : true
+			}, {
+				field : 'sex',
+				title : '性别',
+				width : 100,
+				sortable : true,
+				formatter : function(value, row, index) {
+					if (value == 1) {
+						return '男';
+					} else if (value == 2) {
+						return '女';
+					}
+					return value;
+				}
+			}, {
+				field : 'status',
+				title : '状态',
+				width : 100,
+				sortable : true,
+				formatter : function(value, row, index) {
+					if (value == 1) {
+						return '正常';
+					} else if (value == 2) {
+						return '禁用';
+					} else if (value == 3) {
+						return '锁定';
+					} else if (value == 4) {
+						return '删除';
+					}
+					return value;
+				}
+			}, {
+				field : 'failtimes',
+				title : '登录失败次数',
+				width : 100,
+				sortable : true
+			}, {
+				field : 'expiredtime',
+				title : '密码过期时间',
+				width : 200,
+				sortable : true
+			}, {
+				field : 'createtime',
+				title : '创建时间',
+				width : 200,
+				sortable : true
+			} ],
+			uniqueId : 'id',
+			idField : 'id',
+			striped : true,
+			clickToSelect : true,
+			singleSelect : true,
+			sidePagination : 'server',
+			pagination : true,
+			queryParamsType : '',
+			pageNumber : 1,
+			pageSize : 10,
+			pageList : [ 10, 50, 250, 500, 1000 ],
+			queryParams : queryParams,
+			responseHandler : function(result) {
+				layer.closeAll();
+				result.rows = result.data.records;
+				result.total = result.data.total;
+				return result;
+			}
+		});
+	}
+
+	$(function() {
+		$('input').iCheck({
+			checkboxClass : 'icheckbox_square-blue',
+			radioClass : 'iradio_square-blue',
+			increaseArea : '20%' /* optional */
+		});
+
+		var locale = {
+			format : 'YYYY-MM-DD',
+			separator : ' ~ ',
+			applyLabel : '确定',
+			cancelLabel : '取消',
+			customRangeLabel : '自定义',
+			daysOfWeek : [ '日', '一', '二', '三', '四', '五', '六' ],
+			monthNames : [ '一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月' ]
+		};
+
+		var ranges = {
+			'今日' : [ moment(), moment() ],
+			'昨日' : [ moment().subtract(1, 'days'), moment().subtract(1, 'days') ],
+			'最近7日' : [ moment().subtract(6, 'days'), moment() ],
+			'最近30日' : [ moment().subtract(29, 'days'), moment() ],
+			'本月' : [ moment().startOf('month'), moment().endOf('month') ],
+			'上月' : [ moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month') ]
+		};
+
+		$('#searchRangesDate').daterangepicker({
+			locale : locale,
+			ranges : ranges,
+			startDate : moment().startOf('month'),
+			endDate : moment().endOf('month')
+		});
+
+		bootstrapTable();
+
+		$('#userTable').on('load-success.bs.table', function(data) {
+			if (viewer != null) {
+				viewer.destroy();
+			}
+			viewer = new Viewer(document.getElementById('userTable'));
+		});
+
+		$('#user_search').on('click', function() {
+			refresh();
+		});
+
+		$('#user_edit').on('click', function() {
+			var selections = $('#userTable').bootstrapTable('getSelections');
+			if (selections == null || selections.length == 0) {
+				layer.msg('请选择一项纪录', {
+					icon : 5
+				});
+				return;
+			}
+			var id = 'editUserDiv';
+			layer.open({
+				type : 1,
+				title : $(this).html(),
+				content : $('#' + id),
+				success : function(layero, index) {
+					$('#editId').val(selections[0].id);
+					$('#editUsername').val(selections[0].username);
+					$('#editName').val(selections[0].name);
+					$('#editEmail').val(selections[0].email);
+					$('#editPhone').val(selections[0].phone);
+					$('#editBirthday').val(selections[0].birthday);
+					var sex = selections[0].sex;
+					$('#editUserDiv input:radio[name=sex][value=' + sex + ']').iCheck('check');
+					var status = selections[0].status;
+					$('#editUserDiv input:radio[name=status][value=' + status + ']').iCheck('check');
+					$('#editBirthday').datepicker({
+						language : "zh-CN",
+						format : "yyyy-mm-dd"
+					});
+				},
+				cancel : function() {
+					//右上角关闭回调
+					empty(id);
+					//return false 开启该代码可禁止点击该按钮关闭
+				}
+			});
+		});
+
+		$('#editUserDiv form').bootstrapValidator({
+			message : '这个值是无效的',
+			feedbackIcons : {
+				valid : 'fa fa-check',
+				invalid : 'fa fa-remove',
+				validating : 'fa fa-refresh'
+			},
+			fields : {
+				name : {
+					validators : {
+						notEmpty : {}
+					}
+				}
+			}
+		}).on('success.form.bv', function(e) {
+			// Prevent form submission
+			e.preventDefault();
+
+			// Get the form instance
+			var $form = $(e.target);
+
+			// Get the BootstrapValidator instance
+			var bv = $form.data('bootstrapValidator');
+
+			layer.confirm('确定保存？', {
+				icon : 3,
+				title : '提示'
+			}, function(index) {
+				// Use Ajax to submit form data
+				$.post($form.attr('action'), $form.serialize(), function(result) {
+					if (result.success) {
+						layer.msg(result.msg, {
+							icon : 6
+						});
+						empty('editUserDiv');
+						refresh();
+					} else {
+						layer.msg(result.errorMsg, {
+							icon : 5
+						});
+					}
+				}, 'json');
+			});
+		});
+
+		$('#user_authority').on('click', function() {
+			var selections = $('#userTable').bootstrapTable('getSelections');
+			if (selections == null || selections.length == 0) {
+				layer.msg('请选择一项纪录', {
+					icon : 5
+				});
+				return;
+			}
+			var id = 'authorityUserDiv';
+			layer.open({
+				type : 1,
+				title : $(this).html(),
+				content : $('#' + id),
+				success : function(layero, index) {
+					$('#authorityId').val(selections[0].id);
+					refreshTreeview(selections[0].id);
+				},
+				cancel : function() {
+					//右上角关闭回调
+					empty(id);
+					//return false 开启该代码可禁止点击该按钮关闭
+				}
+			});
+		});
+
+		$('#authority_save').on('click', function() {
+			var checkedNode = $('#tree').treeview('getChecked');
+			if (checkedNode == null || checkedNode.length == 0) {
+				layer.msg('请至少选择一个角色', {
+					icon : 5
+				});
+			}
+			var roleids = new Array();
+			$.each(checkedNode, function(index, element) {
+				roleids.push(element.id);
+			});
+			layer.confirm('确定保存？', {
+				icon : 3,
+				title : '提示'
+			}, function(index) {
+				$.ajax({
+					type : 'post',
+					url : '/sys/userRole/authority',
+					data : {
+						userid : $('#authorityId').val(),
+						roleids : roleids.join(',')
+					},
+					success : function(result) {
+						if (result.success) {
+							layer.msg(result.msg, {
+								icon : 6
+							});
+							refresh();
+						} else {
+							layer.msg(result.errorMsg, {
+								icon : 5
+							});
+						}
+					}
+				});
+			});
+		});
+	});
+</script>
+</html>

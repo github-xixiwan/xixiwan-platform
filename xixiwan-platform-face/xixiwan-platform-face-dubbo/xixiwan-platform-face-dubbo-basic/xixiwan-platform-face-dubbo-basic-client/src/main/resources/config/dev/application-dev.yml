@@ -1,0 +1,6 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: nacos.xixiwan.cloud
+        namespace: xixiwan-platform

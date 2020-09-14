@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common :: common('注册')">
+</head>
+<body class="hold-transition register-page">
+	<div class="register-box">
+		<div class="register-logo">
+			<a href="/">&copy;<b>XIXIWAN</b> platform
+			</a>
+		</div>
+		<div class="register-box-body">
+			<p class="login-box-msg">用户注册</p>
+
+			<form id="registerForm" action="/register">
+				<div class="form-group">
+					<div class="input-group">
+						<div class="input-group-addon">
+							<i class="fa fa-fw fa-user" aria-hidden="true"></i>
+						</div>
+						<input type="text" name="username" class="form-control"
+							placeholder="账户名">
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="input-group">
+						<div class="input-group-addon">
+							<i class="fa fa-fw fa-envelope-square" aria-hidden="true"></i>
+						</div>
+						<input type="email" name="email" class="form-control"
+							placeholder="邮箱">
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="input-group">
+						<div class="input-group-addon">
+							<i class="fa fa-fw fa-lock" aria-hidden="true"></i>
+						</div>
+						<input type="password" name="password" class="form-control"
+							placeholder="密码">
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="input-group">
+						<div class="input-group-addon">
+							<i class="fa fa-fw fa-lock" aria-hidden="true"></i>
+						</div>
+						<input type="password" name="retypePassword" class="form-control"
+							placeholder="重新输入密码">
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-8">
+						<div class="checkbox icheck">
+							<label> <input type="checkbox"> 我同意 <a href="#">条款</a>
+							</label>
+						</div>
+					</div>
+					<!-- /.col -->
+					<div class="col-xs-4">
+						<button type="submit" class="btn btn-success btn-block btn-flat">
+							<i class="fa fa-fw fa-floppy-o" aria-hidden="true"></i> 注册
+						</button>
+					</div>
+					<!-- /.col -->
+				</div>
+			</form>
+
+			<div class="social-auth-links text-center">
+				<p>- OR -</p>
+				<a href="#" class="btn btn-block btn-social btn-facebook btn-flat"><i
+					class="fa fa-fw fa-facebook" aria-hidden="true"></i> 使用Facebook登录</a> <a
+					href="#" class="btn btn-block btn-social btn-google btn-flat"><i
+					class="fa fa-fw fa-google-plus" aria-hidden="true"></i> 使用Google+登录</a>
+			</div>
+
+			<div class="row">
+				<div class="col-xs-6 ">
+					<a href="/login" class="pull-left">我已经注册过了</a>
+				</div>
+			</div>
+		</div>
+		<!-- /.form-box -->
+	</div>
+	<!-- /.register-box -->
+	<script type="text/javascript">
+		$(function() {
+			$('input').iCheck({
+				checkboxClass : 'icheckbox_square-blue',
+				radioClass : 'iradio_square-blue',
+				increaseArea : '20%' /* optional */
+			});
+
+			$('#registerForm').bootstrapValidator({
+				message : '这个值是无效的',
+				feedbackIcons : {
+					valid : 'fa fa-check',
+					invalid : 'fa fa-remove',
+					validating : 'fa fa-refresh'
+				},
+				fields : {
+					username : {
+						validators : {
+							notEmpty : {}
+						}
+					},
+					email : {
+						validators : {
+							notEmpty : {},
+							emailAddress : {
+								message : '输入不是有效的邮箱地址'
+							}
+						}
+					},
+					password : {
+						validators : {
+							notEmpty : {},
+							identical : {
+								field : 'retypePassword',
+								message : '这两个密码不匹配'
+							}
+						}
+					},
+					retypePassword : {
+						validators : {
+							notEmpty : {},
+							identical : {
+								field : 'password',
+								message : '这两个密码不匹配'
+							}
+						}
+					}
+				}
+			}).on('success.form.bv', function(e) {
+				// Prevent form submission
+				e.preventDefault();
+
+				// Get the form instance
+				var $form = $(e.target);
+
+				// Get the BootstrapValidator instance
+				var bv = $form.data('bootstrapValidator');
+
+				// Use Ajax to submit form data
+				$.post($form.attr('action'), $form.serialize(), function(result) {
+					if (result.success) {
+						layer.msg(result.msg, {
+							icon : 6
+						});
+					} else {
+						layer.msg(result.errorMsg, {
+							icon : 5
+						});
+					}
+				}, 'json');
+			});
+		});
+	</script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+server:
+  port: 6001
+spring:
+  application:
+    name: face-dubbo-basic-service
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    default-property-inclusion: NON_NULL
+  profiles:
+    active: @profileActive@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: ALWAYS
+dubbo:
+  scan:
+    # dubbo 服务扫描基准包
+    base-packages: com.xixiwan.platform.face.dubbo.basic.service.impl
+  protocol:
+    # dubbo 协议
+    name: dubbo
+    # dubbo 协议端口（ -1 表示自增端口，从 20880 开始）
+    port: -1
+  registry:
+    # 挂载到 Spring Cloud 注册中心
+    address: spring-cloud://localhost

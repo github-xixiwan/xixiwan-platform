@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common :: common('主页')">
+</head>
+<body class="hold-transition skin-blue sidebar-mini fixed">
+	<div class="wrapper">
+		<!-- top -->
+		<div th:replace="top"></div>
+
+		<!-- left -->
+		<div th:replace="left"></div>
+
+		<!-- tabs -->
+		<div th:replace="tabs"></div>
+
+		<!-- sidebar -->
+		<div th:replace="sidebar"></div>
+
+		<!-- bottom -->
+		<div th:replace="bottom"></div>
+	</div>
+</body>
+</html>

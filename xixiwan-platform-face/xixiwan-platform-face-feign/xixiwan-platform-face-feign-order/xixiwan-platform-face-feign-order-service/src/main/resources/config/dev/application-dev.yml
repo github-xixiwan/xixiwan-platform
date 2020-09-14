@@ -1,0 +1,107 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: nacos.xixiwan.cloud
+        namespace: xixiwan-platform
+  redis:
+    cluster:
+      nodes:
+        - 192.168.122.33:6379
+        - 192.168.122.38:6380
+        - 192.168.122.33:6381
+        - 192.168.122.38:6379
+        - 192.168.122.33:6380
+        - 192.168.122.38:6381
+    timeout: 3000
+    database: 0
+    password:
+    lettuce:
+      pool:
+        max-active: 8
+        min-idle: 0
+        max-idle: 8
+        max-wait: -1
+  thymeleaf:
+    cache: false
+sharding:
+  jdbc:
+    datasource:
+      names: ds0,ds0slave0,ds0slave1,ds1,ds1slave0,ds1slave1
+      ds0:
+        type: com.zaxxer.hikari.HikariDataSource
+        jdbc-url: jdbc:mysql://192.168.122.22:3306/xixiwan_shop_0?useUnicode=true&useSSL=false&characterEncoding=utf8
+        username: root
+        password: Sto13875470948!
+      ds0slave0:
+        type: com.zaxxer.hikari.HikariDataSource
+        jdbc-url: jdbc:mysql://192.168.122.23:3306/xixiwan_shop_0?useUnicode=true&useSSL=false&characterEncoding=utf8
+        username: root
+        password: Sto13875470948!
+      ds0slave1:
+        type: com.zaxxer.hikari.HikariDataSource
+        jdbc-url: jdbc:mysql://192.168.122.46:3306/xixiwan_shop_0?useUnicode=true&useSSL=false&characterEncoding=utf8
+        username: root
+        password: Sto13875470948!
+      ds1:
+        type: com.zaxxer.hikari.HikariDataSource
+        jdbc-url: jdbc:mysql://192.168.122.22:3306/xixiwan_shop_1?useUnicode=true&useSSL=false&characterEncoding=utf8
+        username: root
+        password: Sto13875470948!
+      ds1slave0:
+        type: com.zaxxer.hikari.HikariDataSource
+        jdbc-url: jdbc:mysql://192.168.122.23:3306/xixiwan_shop_1?useUnicode=true&useSSL=false&characterEncoding=utf8
+        username: root
+        password: Sto13875470948!
+      ds1slave1:
+        type: com.zaxxer.hikari.HikariDataSource
+        jdbc-url: jdbc:mysql://192.168.122.46:3306/xixiwan_shop_1?useUnicode=true&useSSL=false&characterEncoding=utf8
+        username: root
+        password: Sto13875470948!
+    config:
+      sharding:
+        master-slave-rules:
+          ms_ds0:
+            master-data-source-name: ds0
+            slave-data-source-names:
+              - ds0slave0
+              - ds0slave1
+          ms_ds1:
+            master-data-source-name: ds1
+            slave-data-source-names:
+              - ds1slave0
+              - ds1slave1
+        default-database-strategy:
+          inline:
+            sharding-column: user_id
+            algorithm-expression: ms_ds$->{user_id % 2}
+        tables:
+          order:
+            actual-data-nodes: ms_ds$->{0..1}.order_$->{0..1}
+            table-strategy:
+              inline:
+                sharding-column: id
+                algorithm-expression: order_$->{id % 2}
+          order_product:
+            actual-data-nodes: ms_ds$->{0..1}.order_product_$->{0..1}
+            table-strategy:
+              inline:
+                sharding-column: order_id
+                algorithm-expression: order_product_$->{order_id % 2}
+        binding-tables:
+          - order,order_product
+        props:
+          sql.show: true
+mybatis-plus:
+  mapper-locations: classpath*:mapper/*Mapper.xml
+  global-config:
+    db-config:
+      id-type: ID_WORKER
+      field-strategy: NOT_EMPTY
+      logic-delete-value: 0
+      logic-not-delete-value: 1
+      db-type: MYSQL
+    refresh: true
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false

@@ -1,0 +1,75 @@
+<!-- Left side column. contains the logo and sidebar -->
+<aside class="main-sidebar">
+	<!-- sidebar: style can be found in sidebar.less -->
+	<section class="sidebar">
+		<!-- Sidebar user panel -->
+		<div class="user-panel">
+			<div class="pull-left image">
+				<img th:src="${sysUser.avatar}" class="img-circle" alt="User Image"
+					onclick="editAvatar()">
+			</div>
+			<div class="pull-left info">
+				<p th:text="${sysUser.username}"></p>
+				<a href="#"><i class="fa fa-circle text-success"
+					aria-hidden="true"></i> Online</a>
+			</div>
+		</div>
+		<!-- search form -->
+		<form action="#" method="get" class="sidebar-form">
+			<div class="input-group">
+				<input type="text" name="q" class="form-control"
+					placeholder="Search..."> <span class="input-group-btn">
+					<button type="submit" name="search" id="search-btn"
+						class="btn btn-flat">
+						<i class="fa fa-search" aria-hidden="true"></i>
+					</button>
+				</span>
+			</div>
+		</form>
+		<!-- /.search form -->
+		<!-- sidebar menu: : style can be found in sidebar.less -->
+		<ul class="sidebar-menu" data-widget="tree">
+			<li class="header">MAIN NAVIGATION</li>
+			<li
+				th:class="${menuLevel1.isopen} == 1 ? 'active treeview' : 'treeview'"
+				th:each="menuLevel1 : ${menuList}"
+				th:if="${menuLevel1.pcode} == 'top-level'"><a
+				href="javascript:void(0)" th:data-id="${menuLevel1.id}"
+				th:data-code="${menuLevel1.code}" th:data-name="${menuLevel1.name}"
+				th:data-url="${menuLevel1.url}" th:data-mtype="${menuLevel1.mtype}"><i
+					th:class="'fa '+${menuLevel1.icon}" aria-hidden="true"></i> <span
+					th:text="${menuLevel1.name}"></span> <span
+					class="pull-right-container"> <i
+						th:class="${menuLevel1.mtype} == 1 ? 'fa fa-angle-left pull-right' : ''"
+						aria-hidden="true"></i>
+				</span> </a>
+				<ul class="treeview-menu">
+					<li
+						th:class="${menuLevel2.isopen} == 1 ? 'active treeview' : 'treeview'"
+						th:each="menuLevel2 : ${menuList}"
+						th:if="${menuLevel2.pcode} == ${menuLevel1.code}"><a
+						href="javascript:void(0)" th:data-id="${menuLevel2.id}"
+						th:data-code="${menuLevel2.code}"
+						th:data-name="${menuLevel2.name}" th:data-url="${menuLevel2.url}"
+						th:data-mtype="${menuLevel2.mtype}"><i
+							th:class="'fa '+${menuLevel2.icon}" aria-hidden="true"></i><span
+							th:text="${menuLevel2.name}"></span> <span
+							class="pull-right-container"> <i
+								th:class="${menuLevel2.mtype} == 1 ? 'fa fa-angle-left pull-right' : ''"
+								aria-hidden="true"></i></span></a>
+						<ul class="treeview-menu">
+							<li th:each="menuLevel3 : ${menuList}"
+								th:if="${menuLevel3.pcode} == ${menuLevel2.code}"><a
+								href="javascript:void(0)" th:data-id="${menuLevel3.id}"
+								th:data-code="${menuLevel3.code}"
+								th:data-name="${menuLevel3.name}"
+								th:data-url="${menuLevel3.url}"
+								th:data-mtype="${menuLevel3.mtype}"><i
+									th:class="'fa '+${menuLevel3.icon}" aria-hidden="true"></i><span
+									th:text="${menuLevel3.name}"></span></a></li>
+						</ul></li>
+				</ul></li>
+		</ul>
+	</section>
+	<!-- /.sidebar -->
+</aside>

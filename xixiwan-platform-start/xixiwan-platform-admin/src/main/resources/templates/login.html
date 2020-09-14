@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common :: common('登录')">
+</head>
+<body class="hold-transition login-page">
+	<div class="login-box">
+		<div class="login-logo">
+			<a href="/">&copy;<b>XIXIWAN</b> platform
+			</a>
+		</div>
+		<div class="login-box-body">
+			<p class="login-box-msg">用户登录</p>
+
+			<form id="loginForm" action="/login">
+				<div class="form-group">
+					<div class="input-group">
+						<div class="input-group-addon">
+							<i class="fa fa-fw fa-user" aria-hidden="true"></i>
+						</div>
+						<input type="text" name="username" class="form-control"
+							placeholder="账户名">
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="input-group">
+						<div class="input-group-addon">
+							<i class="fa fa-fw fa-lock" aria-hidden="true"></i>
+						</div>
+						<input type="password" name="password" class="form-control"
+							placeholder="密码">
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-8">
+						<div class="checkbox icheck">
+							<label> <input type="checkbox" name="remember-me">
+								记住我（7天）
+							</label>
+						</div>
+					</div>
+					<!-- /.col -->
+					<div class="col-xs-4">
+						<button type="submit" class="btn btn-success btn-block btn-flat">
+							<i class="fa fa-fw fa-sign-in" aria-hidden="true"></i> 登录
+						</button>
+					</div>
+					<!-- /.col -->
+				</div>
+			</form>
+
+			<div class="social-auth-links text-center">
+				<p>- OR -</p>
+				<a href="#" class="btn btn-block btn-social btn-facebook btn-flat"><i
+					class="fa fa-fw fa-facebook" aria-hidden="true"></i> 使用Facebook登录</a> <a
+					href="#" class="btn btn-block btn-social btn-google btn-flat"><i
+					class="fa fa-fw fa-google-plus" aria-hidden="true"></i> 使用Google+登录</a>
+			</div>
+			<!-- /.social-auth-links -->
+
+			<div class="row">
+				<div class="col-xs-6 ">
+					<a href="/reset" class="pull-left">忘记密码</a>
+				</div>
+				<div class="col-xs-6 ">
+					<a href="/register" class="pull-right">注册</a>
+				</div>
+			</div>
+		</div>
+		<!-- /.login-box-body -->
+	</div>
+	<!-- /.login-box -->
+	<script type="text/javascript">
+		var loadTopWindow = function() {
+			if (window.top != null && window.top.document.URL != document.URL) {
+				window.top.location = document.URL;
+			}
+		}
+
+		$(function() {
+			loadTopWindow();
+
+			$('input').iCheck({
+				checkboxClass : 'icheckbox_square-blue',
+				radioClass : 'iradio_square-blue',
+				increaseArea : '20%' /* optional */
+			});
+
+			$('#loginForm').bootstrapValidator({
+				message : '这个值是无效的',
+				feedbackIcons : {
+					valid : 'fa fa-check',
+					invalid : 'fa fa-remove',
+					validating : 'fa fa-refresh'
+				},
+				fields : {
+					username : {
+						validators : {
+							notEmpty : {}
+						}
+					},
+					password : {
+						validators : {
+							notEmpty : {}
+						}
+					}
+				}
+			}).on('success.form.bv', function(e) {
+				// Prevent form submission
+				e.preventDefault();
+
+				// Get the form instance
+				var $form = $(e.target);
+
+				// Get the BootstrapValidator instance
+				var bv = $form.data('bootstrapValidator');
+
+				// Use Ajax to submit form data
+				$.post($form.attr('action'), $form.serialize(), function(result) {
+					if (result.success) {
+						window.location.href = "/";
+					} else {
+						if (result.errorMsg == '用户凭证已过期') {
+							window.location.href = "/expire";
+						} else {
+							layer.msg(result.errorMsg, {
+								icon : 5
+							});
+						}
+					}
+				}, 'json');
+			});
+		});
+	</script>
+</body>
+</html>

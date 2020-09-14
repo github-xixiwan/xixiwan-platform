@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common :: common(${sysMenu.name})">
+</head>
+<!-- Content Header (Page header) -->
+<div th:replace="contentHeader"></div>
+<!-- Main content -->
+<section class="content">
+	<div class="row">
+		<!-- Left col -->
+		<div class="col-md-2">
+			<div class="box">
+				<div class="box-header">
+					<i class="fa fa-bars" aria-hidden="true"></i>
+					<h3 class="box-title">菜单</h3>
+				</div>
+				<div class="box-body">
+					<div id="tree"></div>
+				</div>
+			</div>
+		</div>
+		<!-- /.col -->
+
+		<div class="col-md-10">
+			<div class="box">
+				<div class="box-header">
+					<h3 class="box-title">条件搜索</h3>
+				</div>
+				<!-- /.box-header -->
+				<!-- form start -->
+				<form class="form-inline">
+					<input type="hidden" id="searchPcode">
+					<div class="box-body">
+						<div class="form-group">
+							<label>名称 </label><input type="text" id="searchName"
+								class="form-control" placeholder="名称">
+						</div>
+					</div>
+					<!-- /.box-body -->
+					<div th:replace="boxFooter"></div>
+					<!-- /.box-footer -->
+				</form>
+				<div class="box-body">
+					<table id="menuTable" class="text-nowrap"></table>
+				</div>
+				<!-- /.box-body -->
+			</div>
+			<!-- /.box -->
+		</div>
+		<!-- /.col -->
+	</div>
+	<!-- /.row -->
+
+	<div id="addMenuDiv" class="box" style="display: none">
+		<!-- form start -->
+		<form action="/sys/menu/addMenu">
+			<div class="box-body">
+				<div class="form-group">
+					<label>父级 </label><input type="text" class="form-control"
+						id="addPname" readonly><input type="hidden" id="addPcode"
+						name="pcode"> <input type="hidden" id="addLevels"
+						name="levels">
+				</div>
+				<div class="form-group">
+					<label>类型 </label><input type="radio" name="mtype" value="1"
+						checked> 目录 <input type="radio" name="mtype" value="2">
+					菜单<input type="radio" name="mtype" value="3"> 按钮
+
+				</div>
+				<div class="form-group">
+					<label>编码 </label><input type="text" name="code"
+						class="form-control" placeholder="编码">
+				</div>
+				<div class="form-group">
+					<label>名称 </label><input type="text" name="name"
+						class="form-control" placeholder="名称">
+				</div>
+				<div class="form-group">
+					<label>序号 </label><input type="number" name="num"
+						class="form-control" placeholder="序号">
+				</div>
+				<div class="form-group">
+					<label>图标 </label><input type="text" name="icon"
+						class="form-control" placeholder="图标">
+				</div>
+				<div id="addTipsDiv" class="form-group" style="display: none">
+					<label>小贴士 </label><input type="text" name="tips"
+						class="form-control" placeholder="小贴士">
+				</div>
+				<div id="addColorDiv" class="form-group" style="display: none">
+					<label>按钮颜色 </label><input type="text" name="color"
+						class="form-control" placeholder="按钮颜色">
+				</div>
+				<div id="addUrlDiv" class="form-group" style="display: none">
+					<label>链接 </label><input type="text" name="url"
+						class="form-control" placeholder="链接">
+				</div>
+				<div class="form-group">
+					<label>状态 </label><input type="radio" name="status" value="1"
+						checked> 启用 <input type="radio" name="status" value="0">
+					禁用
+				</div>
+				<div id="addIsopenDiv" class="form-group">
+					<label>是否打开 </label><input type="radio" name="isopen" value="1">
+					是 <input type="radio" name="isopen" value="0" checked> 否
+				</div>
+			</div>
+			<!-- /.box-body -->
+			<div class="box-footer">
+				<div class="pull-right">
+					<button type="submit" class="btn btn-success">
+						<i class="fa fa-floppy-o" aria-hidden="true"></i> 保存
+					</button>
+				</div>
+			</div>
+			<!-- /.box-footer -->
+		</form>
+	</div>
+
+	<div id="editMenuDiv" class="box" style="display: none">
+		<!-- form start -->
+		<form action="/sys/menu/editMenu">
+			<div class="box-body">
+				<input type="hidden" id="editId" name="id">
+				<div class="form-group">
+					<label>父编码 </label><input type="text" id="editPcode"
+						class="form-control" placeholder="父编码" readonly>
+				</div>
+				<div class="form-group">
+					<label>父名称 </label><input type="text" id="editPname"
+						class="form-control" placeholder="父名称" readonly>
+				</div>
+				<div class="form-group">
+					<label>编码 </label><input type="text" id="editCode"
+						class="form-control" placeholder="编码" readonly>
+				</div>
+				<div class="form-group">
+					<label>名称 </label><input type="text" id="editName" name="name"
+						class="form-control" placeholder="名称">
+				</div>
+				<div class="form-group">
+					<label>序号 </label><input type="number" id="editNum" name="num"
+						class="form-control" placeholder="序号">
+				</div>
+				<div class="form-group">
+					<label>图标 </label><input type="text" id="editIcon" name="icon"
+						class="form-control" placeholder="图标">
+				</div>
+				<div id="editTipsDiv" class="form-group" style="display: none">
+					<label>小贴士 </label><input type="text" id="editTips" name="tips"
+						class="form-control" placeholder="小贴士">
+				</div>
+				<div id="editColorDiv" class="form-group" style="display: none">
+					<label>按钮颜色 </label><input type="text" id="editColor" name="color"
+						class="form-control" placeholder="按钮颜色">
+				</div>
+				<div id="editUrlDiv" class="form-group" style="display: none">
+					<label>链接 </label><input type="text" id="editUrl" name="url"
+						class="form-control" placeholder="链接">
+				</div>
+				<div class="form-group">
+					<label>状态 </label><input type="radio" name="status" value="1"
+						checked> 启用 <input type="radio" name="status" value="0">
+					禁用
+				</div>
+				<div id="editIsopenDiv" class="form-group">
+					<label>是否打开 </label><input type="radio" name="isopen" value="1">
+					是 <input type="radio" name="isopen" value="0" checked> 否
+				</div>
+			</div>
+			<!-- /.box-body -->
+			<div class="box-footer">
+				<div class="pull-right">
+					<button type="submit" class="btn btn-success">
+						<i class="fa fa-floppy-o" aria-hidden="true"></i> 保存
+					</button>
+				</div>
+			</div>
+			<!-- /.box-footer -->
+		</form>
+	</div>
+</section>
+<script type="text/javascript">
+	var getTree = function() {
+		var data;
+		$.ajax({
+			type : 'get',
+			url : '/sys/menu/selectNodeList',
+			data : {
+				mtypeList : '1,2'
+			},
+			async : false,
+			success : function(result) {
+				data = result.data;
+			}
+		});
+		return data;
+	}
+
+	var refreshTreeview = function() {
+		$('#tree').treeview({
+			data : getTree()
+		});
+		$('#tree').on('nodeSelected', function(event, data) {
+			$('#searchPcode').val(data.code);
+			refresh();
+		});
+		$('#tree').on('nodeUnselected', function(event, data) {
+			$('#searchPcode').val('');
+			refresh();
+		});
+	}
+
+	var refresh = function() {
+		layer.load();
+		$('#menuTable').bootstrapTable('refresh', {
+			url : '/sys/menu/selectPage'
+		});
+	}
+
+	var queryParams = function(params) {
+		params.name = $('#searchName').val();
+		params.pcode = $('#searchPcode').val();
+		return params;
+	}
+
+	var bootstrapTable = function() {
+		$('#menuTable').bootstrapTable({
+			columns : [ {
+				checkbox : true
+			}, {
+				field : 'code',
+				title : '编码',
+				width : 100,
+				sortable : true
+			}, {
+				field : 'name',
+				title : '名称',
+				sortable : true
+			}, {
+				field : 'pcode',
+				title : '父编码',
+				width : 100,
+				sortable : true
+			}, {
+				field : 'pname',
+				title : '父名称'
+			}, {
+				field : 'tips',
+				title : '小贴士',
+				width : 150,
+				sortable : true
+			}, {
+				field : 'url',
+				title : '链接',
+				width : 200,
+				sortable : true
+			}, {
+				field : 'status',
+				title : '状态',
+				width : 50,
+				sortable : true,
+				formatter : function(value, row, index) {
+					if (value == 1) {
+						return '启用';
+					} else if (value == 0) {
+						return '禁用';
+					}
+					return value;
+				}
+			}, {
+				field : 'icon',
+				title : '图标',
+				width : 150,
+				sortable : true,
+				formatter : function(value, row, index) {
+					if (value != null && value != '') {
+						return '<i class="fa '+value+'" aria-hidden="true"></i> ' + value;
+					}
+					return value;
+				}
+			}, {
+				field : 'levels',
+				title : '层级',
+				width : 50,
+				sortable : true
+			}, {
+				field : 'num',
+				title : '序号',
+				width : 50,
+				sortable : true
+			}, {
+				field : 'mtype',
+				title : '菜单类型',
+				width : 60,
+				sortable : true,
+				formatter : function(value, row, index) {
+					if (value == 1) {
+						return '目录';
+					} else if (value == 2) {
+						return '菜单';
+					} else if (value == 3) {
+						return '按钮';
+					}
+					return value;
+				}
+			}, {
+				field : 'color',
+				title : '按钮颜色',
+				width : 150,
+				sortable : true,
+				formatter : function(value, row, index) {
+					if (value != null && value != '') {
+						return '<button type="button" class="btn '+value+' fa '+row.icon+'">' + row.name + '</button>';
+					}
+					return value;
+				}
+			}, {
+				field : 'isopen',
+				title : '是否打开',
+				width : 60,
+				sortable : true,
+				formatter : function(value, row, index) {
+					if (value == 1) {
+						return '是';
+					} else if (value == 0) {
+						return '否';
+					}
+					return value;
+				}
+			} ],
+			uniqueId : 'id',
+			idField : 'id',
+			striped : true,
+			clickToSelect : true,
+			singleSelect : true,
+			sidePagination : 'server',
+			pagination : true,
+			queryParamsType : '',
+			pageNumber : 1,
+			pageSize : 10,
+			pageList : [ 10, 50, 250, 500, 1000 ],
+			queryParams : queryParams,
+			responseHandler : function(result) {
+				layer.closeAll();
+				result.rows = result.data.records;
+				result.total = result.data.total;
+				return result;
+			}
+		});
+	}
+
+	$(function() {
+		$('input').iCheck({
+			checkboxClass : 'icheckbox_square-blue',
+			radioClass : 'iradio_square-blue',
+			increaseArea : '20%' /* optional */
+		});
+
+		refreshTreeview();
+
+		bootstrapTable();
+
+		$('#menu_search').on('click', function() {
+			refresh();
+		});
+
+		$('#menu_add').on('click', function() {
+			var selectedNode = $('#tree').treeview('getSelected')[0];
+			var code = '';
+			var text = '';
+			var levels = 0;
+			var mtype = 0;
+			if (selectedNode != null) {
+				code = selectedNode.code;
+				text = selectedNode.text;
+				levels = selectedNode.levels;
+				mtype = selectedNode.mtype;
+			}
+			var id = 'addMenuDiv';
+			layer.open({
+				type : 1,
+				title : $(this).html(),
+				content : $('#' + id),
+				success : function(layero, index) {
+					$('#addPcode').val(code);
+					$('#addPname').val(text);
+					$('#addLevels').val(levels + 1);
+					//父级为空或者父级类别为目录不允许创建按钮
+					if (code == '' || mtype == 1) {
+						$('#addMenuDiv input:radio[name=mtype][value=3]').iCheck('disable');
+					} else {
+						$('#addMenuDiv input:radio[name=mtype][value=3]').iCheck('enable');
+					}
+					//层级为3级或者父级类别为菜单只能创建按钮
+					if (levels == 3 || mtype == 2) {
+						$('#addMenuDiv input:radio[name=mtype][value=1]').iCheck('disable');
+						$('#addMenuDiv input:radio[name=mtype][value=2]').iCheck('disable');
+						$('#addMenuDiv input:radio[name=mtype][value=3]').iCheck('check');
+						$('#addTipsDiv').hide();
+						$('#addUrlDiv').show();
+						$('#addColorDiv').show();
+						$('#addIsopenDiv').hide();
+					} else {
+						//层级为2级的时候只允许创建菜单
+						if (levels == 2) {
+							$('#addMenuDiv input:radio[name=mtype][value=1]').iCheck('disable');
+							$('#addMenuDiv input:radio[name=mtype][value=3]').iCheck('disable');
+							$('#addMenuDiv input:radio[name=mtype][value=2]').iCheck('check');
+							$('#addTipsDiv').show();
+							$('#addUrlDiv').show();
+							$('#addColorDiv').hide();
+							$('#addIsopenDiv').hide();
+						} else {
+							$('#addMenuDiv input:radio[name=mtype][value=1]').iCheck('enable');
+							$('#addMenuDiv input:radio[name=mtype][value=2]').iCheck('enable');
+							$('#addMenuDiv input:radio[name=mtype][value=1]').iCheck('check');
+							$('#addTipsDiv').hide();
+							$('#addUrlDiv').hide();
+							$('#addColorDiv').hide();
+							$('#addIsopenDiv').show();
+						}
+					}
+				},
+				cancel : function() {
+					//右上角关闭回调
+					empty(id);
+					//return false 开启该代码可禁止点击该按钮关闭
+				}
+			});
+		});
+
+		$('#addMenuDiv input:radio[name=mtype]').on('ifChecked', function() {
+			if (this.value == 1) {
+				$('#addTipsDiv').hide();
+				$('#addUrlDiv').hide();
+				$('#addColorDiv').hide();
+				$('#addIsopenDiv').show();
+			} else if (this.value == 2) {
+				$('#addTipsDiv').show();
+				$('#addUrlDiv').show();
+				$('#addColorDiv').hide();
+				$('#addIsopenDiv').hide();
+			} else if (this.value == 3) {
+				$('#addTipsDiv').hide();
+				$('#addUrlDiv').show();
+				$('#addColorDiv').show();
+				$('#addIsopenDiv').hide();
+			}
+		});
+
+		$('#addMenuDiv form').bootstrapValidator({
+			message : '这个值是无效的',
+			feedbackIcons : {
+				valid : 'fa fa-check',
+				invalid : 'fa fa-remove',
+				validating : 'fa fa-refresh'
+			},
+			fields : {
+				code : {
+					validators : {
+						notEmpty : {}
+					}
+				},
+				name : {
+					validators : {
+						notEmpty : {}
+					}
+				},
+				num : {
+					validators : {
+						notEmpty : {}
+					}
+				},
+				icon : {
+					validators : {
+						notEmpty : {}
+					}
+				}
+			}
+		}).on('success.form.bv', function(e) {
+			// Prevent form submission
+			e.preventDefault();
+
+			// Get the form instance
+			var $form = $(e.target);
+
+			// Get the BootstrapValidator instance
+			var bv = $form.data('bootstrapValidator');
+
+			layer.confirm('确定保存？', {
+				icon : 3,
+				title : '提示'
+			}, function(index) {
+				// Use Ajax to submit form data
+				$.post($form.attr('action'), $form.serialize(), function(result) {
+					if (result.success) {
+						layer.msg(result.msg, {
+							icon : 6
+						});
+						empty('addMenuDiv');
+						refreshTreeview();
+						refresh();
+					} else {
+						layer.msg(result.errorMsg, {
+							icon : 5
+						});
+					}
+				}, 'json');
+			});
+		});
+
+		$('#menu_edit').on('click', function() {
+			var selections = $('#menuTable').bootstrapTable('getSelections');
+			if (selections == null || selections.length == 0) {
+				layer.msg('请选择一项纪录', {
+					icon : 5
+				});
+				return;
+			}
+			var id = 'editMenuDiv';
+			layer.open({
+				type : 1,
+				title : $(this).html(),
+				content : $('#' + id),
+				success : function(layero, index) {
+					var mtype = selections[0].mtype;
+					if (mtype == 1) {
+						$('#editTipsDiv').hide();
+						$('#editUrlDiv').hide();
+						$('#editColorDiv').hide();
+						$('#editIsopenDiv').show();
+					} else if (mtype == 2) {
+						$('#editTipsDiv').show();
+						$('#editUrlDiv').show();
+						$('#editColorDiv').hide();
+						$('#editIsopenDiv').hide();
+					} else if (mtype == 3) {
+						$('#editTipsDiv').hide();
+						$('#editUrlDiv').show();
+						$('#editColorDiv').show();
+						$('#editIsopenDiv').hide();
+					}
+					$('#editId').val(selections[0].id);
+					$('#editPcode').val(selections[0].pcode);
+					$('#editPname').val(selections[0].pname);
+					$('#editCode').val(selections[0].code);
+					$('#editName').val(selections[0].name);
+					$('#editIcon').val(selections[0].icon);
+					$('#editNum').val(selections[0].num);
+					$('#editTips').val(selections[0].tips);
+					$('#editColor').val(selections[0].color);
+					$('#editUrl').val(selections[0].url);
+					var status = selections[0].status;
+					$('#editMenuDiv input:radio[name=status][value=' + status + ']').iCheck('check');
+					var isopen = selections[0].isopen;
+					$('#editMenuDiv input:radio[name=isopen][value=' + isopen + ']').iCheck('check');
+				},
+				cancel : function() {
+					//右上角关闭回调
+					empty(id);
+					//return false 开启该代码可禁止点击该按钮关闭
+				}
+			});
+		});
+
+		$('#editMenuDiv form').bootstrapValidator({
+			message : '这个值是无效的',
+			feedbackIcons : {
+				valid : 'fa fa-check',
+				invalid : 'fa fa-remove',
+				validating : 'fa fa-refresh'
+			},
+			fields : {
+				name : {
+					validators : {
+						notEmpty : {}
+					}
+				},
+				num : {
+					validators : {
+						notEmpty : {}
+					}
+				},
+				icon : {
+					validators : {
+						notEmpty : {}
+					}
+				}
+			}
+		}).on('success.form.bv', function(e) {
+			// Prevent form submission
+			e.preventDefault();
+
+			// Get the form instance
+			var $form = $(e.target);
+
+			// Get the BootstrapValidator instance
+			var bv = $form.data('bootstrapValidator');
+
+			layer.confirm('确定保存？', {
+				icon : 3,
+				title : '提示'
+			}, function(index) {
+				// Use Ajax to submit form data
+				$.post($form.attr('action'), $form.serialize(), function(result) {
+					if (result.success) {
+						layer.msg(result.msg, {
+							icon : 6
+						});
+						empty('editMenuDiv');
+						refreshTreeview();
+						refresh();
+					} else {
+						layer.msg(result.errorMsg, {
+							icon : 5
+						});
+					}
+				}, 'json');
+			});
+		});
+
+		$('#menu_delete').on('click', function() {
+			var selections = $('#menuTable').bootstrapTable('getSelections');
+			if (selections == null || selections.length == 0) {
+				layer.msg('请选择一项纪录', {
+					icon : 5
+				});
+				return;
+			}
+			layer.confirm('确定删除？', {
+				icon : 3,
+				title : '提示'
+			}, function(index) {
+				$.ajax({
+					type : 'post',
+					url : '/sys/menu/deleteMenu',
+					data : {
+						id : selections[0].id
+					},
+					success : function(result) {
+						if (result.success) {
+							layer.msg(result.msg, {
+								icon : 6
+							});
+							refreshTreeview();
+							refresh();
+						} else {
+							layer.msg(result.errorMsg, {
+								icon : 5
+							});
+						}
+					}
+				});
+			});
+		});
+	});
+</script>
+</html>

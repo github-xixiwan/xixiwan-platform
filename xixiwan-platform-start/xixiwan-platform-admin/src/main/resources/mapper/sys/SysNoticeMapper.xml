@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.xixiwan.platform.sys.mapper.SysNoticeMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap"
+		type="com.xixiwan.platform.sys.entity.SysNotice">
+		<result column="id" property="id" />
+		<result column="type" property="type" />
+		<result column="objecttype" property="objecttype" />
+		<result column="title" property="title" />
+		<result column="content" property="content" />
+		<result column="modifytime" property="modifytime" />
+		<result column="createtime" property="createtime" />
+		<result column="status" property="status" />
+	</resultMap>
+
+	<!-- 通用查询结果列 -->
+	<sql id="Base_Column_List">
+		id, type, objecttype, title, content, modifytime,
+		createtime, status
+	</sql>
+
+	<select id="selectUserNoticeByForm"
+		parameterType="com.xixiwan.platform.sys.form.SysNoticeForm"
+		resultMap="BaseResultMap">
+		select n.*,u.id nuid,u.isread,u.readtime from sys_notice n left join
+		sys_notice_user u on n.id = u.noticeid where 1 = 1
+		<if test="status != null">
+			AND status = #{status}
+		</if>
+		<if test="isread != null">
+			AND isread = #{isread}
+		</if>
+		<if test="userid != null">
+			AND userid = #{userid}
+		</if>
+		order by modifytime desc
+	</select>
+
+</mapper>

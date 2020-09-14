@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common :: common(${sysMenu.name})">
+</head>
+<!-- Content Header (Page header) -->
+<div th:replace="contentHeader"></div>
+<!-- Main content -->
+<section class="content">
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="box">
+				<div class="box-header">
+					<h3 class="box-title">条件搜索</h3>
+				</div>
+				<!-- /.box-header -->
+				<!-- form start -->
+				<form class="form-inline">
+					<div class="box-body">
+						<div class="form-group">
+							<label>权限 </label><input type="text" id="searchAuthorities"
+								class="form-control" placeholder="权限">
+						</div>
+						<div class="form-group">
+							<label>名称 </label><input type="text" id="searchName"
+								class="form-control" placeholder="名称">
+						</div>
+					</div>
+					<!-- /.box-body -->
+					<div th:replace="boxFooter"></div>
+					<!-- /.box-footer -->
+				</form>
+				<div class="box-body">
+					<table id="roleTable"></table>
+				</div>
+				<!-- /.box-body -->
+			</div>
+			<!-- /.box -->
+
+		</div>
+		<!-- /.col -->
+	</div>
+	<!-- /.row -->
+
+	<div id="addRoleDiv" class="box" style="display: none">
+		<!-- form start -->
+		<form action="/sys/role/addRole">
+			<div class="box-body">
+				<div class="form-group">
+					<label>权限 </label><input type="text" name="authorities"
+						class="form-control" placeholder="权限">
+				</div>
+				<div class="form-group">
+					<label>名称 </label><input type="text" name="name"
+						class="form-control" placeholder="名称">
+				</div>
+				<div class="form-group">
+					<label>描述 </label><input type="text" name="description"
+						class="form-control" placeholder="描述">
+				</div>
+				<div class="form-group">
+					<label>序号 </label><input type="number" name="num"
+						class="form-control" placeholder="序号">
+				</div>
+				<div class="form-group">
+					<label>状态 </label><input type="radio" name="status" value="1"
+						checked> 启用 <input type="radio" name="status" value="0">
+					禁用
+				</div>
+			</div>
+			<!-- /.box-body -->
+			<div class="box-footer">
+				<div class="pull-right">
+					<button type="submit" class="btn btn-success">
+						<i class="fa fa-floppy-o" aria-hidden="true"></i> 保存
+					</button>
+				</div>
+			</div>
+			<!-- /.box-footer -->
+		</form>
+	</div>
+
+	<div id="editRoleDiv" class="box" style="display: none">
+		<!-- form start -->
+		<form action="/sys/role/editRole">
+			<div class="box-body">
+				<input type="hidden" id="editId" name="id">
+				<div class="form-group">
+					<label>权限 </label><input type="text" id="editAuthorities"
+						name="authorities" class="form-control" placeholder="权限">
+				</div>
+				<div class="form-group">
+					<label>名称 </label><input type="text" id="editName" name="name"
+						class="form-control" placeholder="名称">
+				</div>
+				<div class="form-group">
+					<label>描述 </label><input type="text" id="editDescription"
+						name="description" class="form-control" placeholder="描述">
+				</div>
+				<div class="form-group">
+					<label>序号 </label><input type="number" id="editNum" name="num"
+						class="form-control" placeholder="序号">
+				</div>
+				<div class="form-group">
+					<label>状态 </label><input type="radio" name="status" value="1"
+						checked> 启用 <input type="radio" name="status" value="0">
+					禁用
+				</div>
+			</div>
+			<!-- /.box-body -->
+			<div class="box-footer">
+				<div class="pull-right">
+					<button type="submit" class="btn btn-success">
+						<i class="fa fa-floppy-o" aria-hidden="true"></i> 保存
+					</button>
+				</div>
+			</div>
+			<!-- /.box-footer -->
+		</form>
+	</div>
+
+	<div id="authorityRoleDiv" class="box" style="display: none">
+		<div class="box-body">
+			<input type="hidden" id="authorityId" name="id">
+			<div id="tree"></div>
+		</div>
+		<!-- /.box-body -->
+		<div class="box-footer">
+			<div class="pull-right">
+				<button type="button" id="authority_save" class="btn btn-success">
+					<i class="fa fa-floppy-o" aria-hidden="true"></i> 保存
+				</button>
+			</div>
+		</div>
+		<!-- /.box-footer -->
+	</div>
+</section>
+<script type="text/javascript">
+	var getTree = function(roleid) {
+		var data;
+		$.ajax({
+			type : 'get',
+			url : '/sys/menu/selectNodeList',
+			data : {
+				roleid : roleid,
+				status : 1
+			},
+			async : false,
+			success : function(result) {
+				data = result.data;
+			}
+		});
+		return data;
+	}
+
+	var refreshTreeview = function(roleid) {
+		$('#tree').treeview({
+			data : getTree(roleid),
+			showCheckbox : true
+		});
+	}
+
+	var refresh = function() {
+		layer.load();
+		$('#roleTable').bootstrapTable('refresh', {
+			url : '/sys/role/selectPage'
+		});
+	}
+
+	var queryParams = function(params) {
+		params.authorities = $('#searchAuthorities').val();
+		params.name = $('#searchName').val();
+		return params;
+	}
+
+	var bootstrapTable = function() {
+		$('#roleTable').bootstrapTable({
+			columns : [ {
+				checkbox : true
+			}, {
+				field : 'authorities',
+				title : '权限',
+				width : 200,
+				sortable : true
+			}, {
+				field : 'name',
+				title : '名称',
+				width : 200,
+				sortable : true
+			}, {
+				field : 'description',
+				title : '描述',
+				sortable : true
+			}, {
+				field : 'num',
+				title : '序号',
+				width : 50,
+				sortable : true
+			}, {
+				field : 'status',
+				title : '状态',
+				width : 100,
+				sortable : true,
+				formatter : function(value, row, index) {
+					if (value == 1) {
+						return '启用';
+					} else if (value == 0) {
+						return '禁用';
+					}
+					return value;
+				}
+			}, {
+				field : 'modifytime',
+				title : '修改时间',
+				width : 200,
+				sortable : true
+			}, {
+				field : 'createtime',
+				title : '创建时间',
+				width : 200,
+				sortable : true
+			} ],
+			uniqueId : 'id',
+			idField : 'id',
+			striped : true,
+			clickToSelect : true,
+			singleSelect : true,
+			sidePagination : 'server',
+			pagination : true,
+			queryParamsType : '',
+			pageNumber : 1,
+			pageSize : 10,
+			pageList : [ 10, 50, 250, 500, 1000 ],
+			queryParams : queryParams,
+			responseHandler : function(result) {
+				layer.closeAll();
+				result.rows = result.data.records;
+				result.total = result.data.total;
+				return result;
+			}
+		});
+	}
+
+	$(function() {
+		$('input').iCheck({
+			checkboxClass : 'icheckbox_square-blue',
+			radioClass : 'iradio_square-blue',
+			increaseArea : '20%' /* optional */
+		});
+
+		bootstrapTable();
+
+		$('#role_search').on('click', function() {
+			refresh();
+		});
+
+		$('#role_add').on('click', function() {
+			var id = 'addRoleDiv';
+			layer.open({
+				type : 1,
+				title : $(this).html(),
+				content : $('#' + id),
+				cancel : function() {
+					//右上角关闭回调
+					empty(id);
+					//return false 开启该代码可禁止点击该按钮关闭
+				}
+			});
+		});
+
+		$('#addRoleDiv form').bootstrapValidator({
+			message : '这个值是无效的',
+			feedbackIcons : {
+				valid : 'fa fa-check',
+				invalid : 'fa fa-remove',
+				validating : 'fa fa-refresh'
+			},
+			fields : {
+				authorities : {
+					validators : {
+						notEmpty : {}
+					}
+				},
+				name : {
+					validators : {
+						notEmpty : {}
+					}
+				},
+				num : {
+					validators : {
+						notEmpty : {}
+					}
+				}
+			}
+		}).on('success.form.bv', function(e) {
+			// Prevent form submission
+			e.preventDefault();
+
+			// Get the form instance
+			var $form = $(e.target);
+
+			// Get the BootstrapValidator instance
+			var bv = $form.data('bootstrapValidator');
+
+			layer.confirm('确定保存？', {
+				icon : 3,
+				title : '提示'
+			}, function(index) {
+				// Use Ajax to submit form data
+				$.post($form.attr('action'), $form.serialize(), function(result) {
+					if (result.success) {
+						layer.msg(result.msg, {
+							icon : 6
+						});
+						empty('addRoleDiv');
+						refresh();
+					} else {
+						layer.msg(result.errorMsg, {
+							icon : 5
+						});
+					}
+				}, 'json');
+			});
+		});
+
+		$('#role_edit').on('click', function() {
+			var selections = $('#roleTable').bootstrapTable('getSelections');
+			if (selections == null || selections.length == 0) {
+				layer.msg('请选择一项纪录', {
+					icon : 5
+				});
+				return;
+			}
+			var id = 'editRoleDiv';
+			layer.open({
+				type : 1,
+				title : $(this).html(),
+				content : $('#' + id),
+				success : function(layero, index) {
+					$('#editId').val(selections[0].id);
+					$('#editAuthorities').val(selections[0].authorities);
+					$('#editName').val(selections[0].name);
+					$('#editDescription').val(selections[0].description);
+					$('#editNum').val(selections[0].num);
+					var status = selections[0].status;
+					$('#editRoleDiv input:radio[name=status][value=' + status + ']').iCheck('check');
+				},
+				cancel : function() {
+					//右上角关闭回调
+					empty(id);
+					//return false 开启该代码可禁止点击该按钮关闭
+				}
+			});
+		});
+
+		$('#editRoleDiv form').bootstrapValidator({
+			message : '这个值是无效的',
+			feedbackIcons : {
+				valid : 'fa fa-check',
+				invalid : 'fa fa-remove',
+				validating : 'fa fa-refresh'
+			},
+			fields : {
+				authorities : {
+					validators : {
+						notEmpty : {}
+					}
+				},
+				name : {
+					validators : {
+						notEmpty : {}
+					}
+				},
+				num : {
+					validators : {
+						notEmpty : {}
+					}
+				}
+			}
+		}).on('success.form.bv', function(e) {
+			// Prevent form submission
+			e.preventDefault();
+
+			// Get the form instance
+			var $form = $(e.target);
+
+			// Get the BootstrapValidator instance
+			var bv = $form.data('bootstrapValidator');
+
+			layer.confirm('确定保存？', {
+				icon : 3,
+				title : '提示'
+			}, function(index) {
+				// Use Ajax to submit form data
+				$.post($form.attr('action'), $form.serialize(), function(result) {
+					if (result.success) {
+						layer.msg(result.msg, {
+							icon : 6
+						});
+						empty('editRoleDiv');
+						refresh();
+					} else {
+						layer.msg(result.errorMsg, {
+							icon : 5
+						});
+					}
+				}, 'json');
+			});
+		});
+
+		$('#role_delete').on('click', function() {
+			var selections = $('#roleTable').bootstrapTable('getSelections');
+			if (selections == null || selections.length == 0) {
+				layer.msg('请选择一项纪录', {
+					icon : 5
+				});
+				return;
+			}
+			layer.confirm('确定删除？', {
+				icon : 3,
+				title : '提示'
+			}, function(index) {
+				$.ajax({
+					type : 'post',
+					url : '/sys/role/deleteRole',
+					data : {
+						id : selections[0].id
+					},
+					success : function(result) {
+						if (result.success) {
+							layer.msg(result.msg, {
+								icon : 6
+							});
+							refresh();
+						} else {
+							layer.msg(result.errorMsg, {
+								icon : 5
+							});
+						}
+					}
+				});
+			});
+		});
+
+		$('#role_authority').on('click', function() {
+			var selections = $('#roleTable').bootstrapTable('getSelections');
+			if (selections == null || selections.length == 0) {
+				layer.msg('请选择一项纪录', {
+					icon : 5
+				});
+				return;
+			}
+			var id = 'authorityRoleDiv';
+			layer.open({
+				type : 1,
+				title : $(this).html(),
+				content : $('#' + id),
+				success : function(layero, index) {
+					$('#authorityId').val(selections[0].id);
+					refreshTreeview(selections[0].id);
+				},
+				cancel : function() {
+					//右上角关闭回调
+					empty(id);
+					//return false 开启该代码可禁止点击该按钮关闭
+				}
+			});
+		});
+
+		$('#authority_save').on('click', function() {
+			var checkedNode = $('#tree').treeview('getChecked');
+			if (checkedNode == null || checkedNode.length == 0) {
+				layer.msg('请至少选择一个菜单', {
+					icon : 5
+				});
+			}
+			var menuids = new Array();
+			$.each(checkedNode, function(index, element) {
+				menuids.push(element.id);
+			});
+			layer.confirm('确定保存？', {
+				icon : 3,
+				title : '提示'
+			}, function(index) {
+				$.ajax({
+					type : 'post',
+					url : '/sys/roleMenu/authority',
+					data : {
+						roleid : $('#authorityId').val(),
+						menuids : menuids.join(',')
+					},
+					success : function(result) {
+						if (result.success) {
+							layer.msg(result.msg, {
+								icon : 6
+							});
+							refresh();
+						} else {
+							layer.msg(result.errorMsg, {
+								icon : 5
+							});
+						}
+					}
+				});
+			});
+		});
+	});
+</script>
+</html>

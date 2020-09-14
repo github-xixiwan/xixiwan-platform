@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common :: common('选择用户')">
+</head>
+<!-- Main content -->
+<section class="content">
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="box">
+				<div class="box-header">
+					<h3 class="box-title">条件搜索</h3>
+				</div>
+				<!-- /.box-header -->
+				<!-- form start -->
+				<form class="form-inline">
+					<div class="box-body">
+						<div class="form-group">
+							<label>创建时间 </label><input type="text" id="searchRangesDate"
+								class="form-control" placeholder="创建时间">
+						</div>
+						<div class="form-group">
+							<label>账号 </label><input type="text" id="searchUsername"
+								class="form-control" placeholder="账号">
+						</div>
+						<div class="form-group">
+							<label>名字 </label><input type="text" id="searchName"
+								class="form-control" placeholder="名字">
+						</div>
+						<div class="form-group">
+							<button type="button" id="user_search"
+								class="btn btn-success fa fa-search">搜索</button>
+							<button type="button" id="repeal_notice"
+								class="btn btn-success fa fa-paper-plane">发布</button>
+						</div>
+					</div>
+					<!-- /.box-body -->
+				</form>
+				<div class="box-body">
+					<table id="userTable"></table>
+				</div>
+				<!-- /.box-body -->
+			</div>
+			<!-- /.box -->
+
+		</div>
+		<!-- /.col -->
+	</div>
+	<!-- /.row -->
+</section>
+<script type="text/javascript" th:inline="javascript">
+	var refresh = function() {
+		layer.load();
+		$('#userTable').bootstrapTable('refresh', {
+			url : '/sys/user/selectPage'
+		});
+	}
+
+	var queryParams = function(params) {
+		params.rangesDate = $('#searchRangesDate').val();
+		params.username = $('#searchUsername').val();
+		params.name = $('#searchName').val();
+		return params;
+	}
+
+	var noticeid = [[${userForm.noticeid}]];
+	var singleSelect = [[${userForm.singleSelect}]];
+
+	var bootstrapTable = function() {
+		$('#userTable').bootstrapTable({
+			columns : [ {
+				checkbox : true
+			}, {
+				field : 'username',
+				title : '账号',
+				sortable : true
+			}, {
+				field : 'name',
+				title : '名字',
+				sortable : true
+			}, {
+				field : 'email',
+				title : '邮箱',
+				width : 200,
+				sortable : true
+			}, {
+				field : 'phone',
+				title : '电话',
+				width : 160,
+				sortable : true
+			}, {
+				field : 'sex',
+				title : '性别',
+				width : 100,
+				sortable : true,
+				formatter : function(value, row, index) {
+					if (value == 1) {
+						return '男';
+					} else if (value == 2) {
+						return '女';
+					}
+					return value;
+				}
+			}, {
+				field : 'status',
+				title : '状态',
+				width : 100,
+				sortable : true,
+				formatter : function(value, row, index) {
+					if (value == 1) {
+						return '正常';
+					} else if (value == 2) {
+						return '禁用';
+					} else if (value == 3) {
+						return '锁定';
+					} else if (value == 4) {
+						return '删除';
+					}
+					return value;
+				}
+			}, {
+				field : 'createtime',
+				title : '创建时间',
+				width : 200,
+				sortable : true
+			} ],
+			uniqueId : 'id',
+			idField : 'id',
+			striped : true,
+			clickToSelect : true,
+			singleSelect : singleSelect,
+			sidePagination : 'server',
+			pagination : true,
+			queryParamsType : '',
+			pageNumber : 1,
+			pageSize : 10,
+			pageList : [ 10, 50, 250, 500, 1000 ],
+			queryParams : queryParams,
+			responseHandler : function(result) {
+				layer.closeAll();
+				result.rows = result.data.records;
+				result.total = result.data.total;
+				return result;
+			}
+		});
+	}
+
+	$(function() {
+		var locale = {
+			format : 'YYYY-MM-DD',
+			separator : ' ~ ',
+			applyLabel : '确定',
+			cancelLabel : '取消',
+			customRangeLabel : '自定义',
+			daysOfWeek : [ '日', '一', '二', '三', '四', '五', '六' ],
+			monthNames : [ '一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月' ]
+		};
+
+		var ranges = {
+			'今日' : [ moment(), moment() ],
+			'昨日' : [ moment().subtract(1, 'days'), moment().subtract(1, 'days') ],
+			'最近7日' : [ moment().subtract(6, 'days'), moment() ],
+			'最近30日' : [ moment().subtract(29, 'days'), moment() ],
+			'本月' : [ moment().startOf('month'), moment().endOf('month') ],
+			'上月' : [ moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month') ]
+		};
+
+		$('#searchRangesDate').daterangepicker({
+			locale : locale,
+			ranges : ranges,
+			startDate : moment().startOf('month'),
+			endDate : moment().endOf('month')
+		});
+
+		bootstrapTable();
+
+		$('#user_search').on('click', function() {
+			refresh();
+		});
+
+		$('#repeal_notice').on('click', function() {
+			var selections = $('#userTable').bootstrapTable('getSelections');
+			if (selections == null || selections.length == 0) {
+				layer.msg('请选择一项纪录', {
+					icon : 5
+				});
+				return;
+			}
+			var ids = new Array();
+			$.each(selections, function(index, element) {
+				ids.push(element.id);
+			});
+			layer.confirm('确定发布？', {
+				icon : 3,
+				title : '提示'
+			}, function(index) {
+				$.ajax({
+					type : 'post',
+					url : '/sys/notice/releaseNotice',
+					data : {
+						id : noticeid,
+						userids : ids.join(',')
+					},
+					success : function(result) {
+						if (result.success) {
+							layer.msg(result.msg, {
+								icon : 6
+							});
+							layer.closeAll();
+							parent.refresh();
+						} else {
+							layer.msg(result.errorMsg, {
+								icon : 5
+							});
+						}
+					}
+				});
+			});
+		});
+	});
+</script>
+</html>

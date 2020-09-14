@@ -1,0 +1,54 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: nacos.xixiwan.cloud
+        namespace: xixiwan-platform
+    sentinel:
+      datasource:
+        ds:
+          nacos:
+            server-addr: nacos.xixiwan.cloud
+            namespace: xixiwan-platform
+            dataId: ${spring.application.name}-sentinel
+            rule-type: flow
+      transport:
+        dashboard: 192.168.122.22:8080
+  datasource:
+    url: jdbc:mysql://192.168.122.23:3306/xixiwan_platform?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    hikari:
+      username: root
+      password: Sto13875470948!
+  redis:
+    cluster:
+      nodes:
+        - 192.168.122.33:6379
+        - 192.168.122.38:6380
+        - 192.168.122.33:6381
+        - 192.168.122.38:6379
+        - 192.168.122.33:6380
+        - 192.168.122.38:6381
+    timeout: 3000
+    database: 0
+    password:
+    lettuce:
+      pool:
+        max-active: 8
+        min-idle: 0
+        max-idle: 8
+        max-wait: -1
+  thymeleaf:
+    cache: false
+mybatis-plus:
+  mapper-locations: classpath*:mapper/*/*Mapper.xml
+  global-config:
+    db-config:
+      id-type: AUTO
+      field-strategy: NOT_EMPTY
+      logic-delete-value: 0
+      logic-not-delete-value: 1
+      db-type: MYSQL
+    refresh: true
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false

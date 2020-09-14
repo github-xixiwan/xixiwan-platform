@@ -1,0 +1,7 @@
+<div class="box-footer">
+	<div class="btn-group pull-right">
+		<button type="button" th:each="menu : ${menuList}"
+			th:id="${menu.code}" th:class="'btn '+${menu.color}+' fa '+${menu.icon}"
+			th:text="' '+${menu.name}"></button>
+	</div>
+</div>

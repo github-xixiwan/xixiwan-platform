@@ -1,0 +1,276 @@
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+	<div class="nth-tabs" id="tabsId"></div>
+</div>
+<div id="editAvatarDiv" class="box" style="display: none">
+	<!-- form start -->
+	<div class="box-body">
+		<div class="row">
+			<!-- Left col -->
+			<div class="col-md-9">
+				<div class="img-container">
+					<img id="avatarCropper">
+				</div>
+			</div>
+			<!-- /.col -->
+
+			<div class="col-md-3">
+				<!-- <h3>Preview:</h3> -->
+				<div class="docs-preview clearfix">
+					<div class="img-preview preview-lg"></div>
+					<div class="img-preview preview-md"></div>
+					<div class="img-preview preview-sm"></div>
+					<div class="img-preview preview-xs"></div>
+				</div>
+			</div>
+			<!-- /.col -->
+		</div>
+		<!-- /.row -->
+	</div>
+	<!-- /.box-body -->
+	<div class="box-footer docs-buttons">
+		<!-- <h3>Toolbar:</h3> -->
+		<div class="btn-group">
+			<button type="button" class="btn btn-success"
+				data-method="setDragMode" data-option="move" title="Move">
+				<span class="docs-tooltip" data-toggle="tooltip"
+					data-animation="false"
+					title="$().cropper(&quot;setDragMode&quot;, &quot;move&quot;)">
+					<span class="fa fa-arrows"> 移动</span>
+				</span>
+			</button>
+			<button type="button" class="btn btn-success"
+				data-method="setDragMode" data-option="crop" title="Crop">
+				<span class="docs-tooltip" data-toggle="tooltip"
+					data-animation="false"
+					title="$().cropper(&quot;setDragMode&quot;, &quot;crop&quot;)">
+					<span class="fa fa-crop"> 裁剪</span>
+				</span>
+			</button>
+			<button type="button" class="btn btn-success" data-method="zoom"
+				data-option="0.1" title="Zoom In">
+				<span class="docs-tooltip" data-toggle="tooltip"
+					data-animation="false" title="$().cropper(&quot;zoom&quot;, 0.1)">
+					<span class="fa fa-search-plus"> 放大</span>
+				</span>
+			</button>
+			<button type="button" class="btn btn-success" data-method="zoom"
+				data-option="-0.1" title="Zoom Out">
+				<span class="docs-tooltip" data-toggle="tooltip"
+					data-animation="false" title="$().cropper(&quot;zoom&quot;, -0.1)">
+					<span class="fa fa-search-minus"> 缩小</span>
+				</span>
+			</button>
+			<button type="button" class="btn btn-success" data-method="move"
+				data-option="-10" data-second-option="0" title="Move Left">
+				<span class="docs-tooltip" data-toggle="tooltip"
+					data-animation="false"
+					title="$().cropper(&quot;move&quot;, -10, 0)"> <span
+					class="fa fa-arrow-left"> 左移</span>
+				</span>
+			</button>
+			<button type="button" class="btn btn-success" data-method="move"
+				data-option="10" data-second-option="0" title="Move Right">
+				<span class="docs-tooltip" data-toggle="tooltip"
+					data-animation="false" title="$().cropper(&quot;move&quot;, 10, 0)">
+					<span class="fa fa-arrow-right"> 右移</span>
+				</span>
+			</button>
+			<button type="button" class="btn btn-success" data-method="move"
+				data-option="0" data-second-option="-10" title="Move Up">
+				<span class="docs-tooltip" data-toggle="tooltip"
+					data-animation="false"
+					title="$().cropper(&quot;move&quot;, 0, -10)"> <span
+					class="fa fa-arrow-up"> 上移</span>
+				</span>
+			</button>
+			<button type="button" class="btn btn-success" data-method="move"
+				data-option="0" data-second-option="10" title="Move Down">
+				<span class="docs-tooltip" data-toggle="tooltip"
+					data-animation="false" title="$().cropper(&quot;move&quot;, 0, 10)">
+					<span class="fa fa-arrow-down"> 下移</span>
+				</span>
+			</button>
+			<button type="button" class="btn btn-success" data-method="rotate"
+				data-option="-45" title="Rotate Left">
+				<span class="docs-tooltip" data-toggle="tooltip"
+					data-animation="false" title="$().cropper(&quot;rotate&quot;, -45)">
+					<span class="fa fa-rotate-left"> 左旋</span>
+				</span>
+			</button>
+			<button type="button" class="btn btn-success" data-method="rotate"
+				data-option="45" title="Rotate Right">
+				<span class="docs-tooltip" data-toggle="tooltip"
+					data-animation="false" title="$().cropper(&quot;rotate&quot;, 45)">
+					<span class="fa fa-rotate-right"> 右旋</span>
+				</span>
+			</button>
+			<button type="button" class="btn btn-success" data-method="scaleX"
+				data-option="-1" title="Flip Horizontal">
+				<span class="docs-tooltip" data-toggle="tooltip"
+					data-animation="false" title="$().cropper(&quot;scaleX&quot;, -1)">
+					<span class="fa fa-arrows-h"> 水平翻转</span>
+				</span>
+			</button>
+			<button type="button" class="btn btn-success" data-method="scaleY"
+				data-option="-1" title="Flip Vertical">
+				<span class="docs-tooltip" data-toggle="tooltip"
+					data-animation="false" title="$().cropper(&quot;scaleY&quot;, -1)">
+					<span class="fa fa-arrows-v"> 垂直翻转</span>
+				</span>
+			</button>
+		</div>
+
+		<div class="btn-group">
+			<button type="button" class="btn btn-success" data-method="crop"
+				title="Crop">
+				<span class="docs-tooltip" data-toggle="tooltip"
+					data-animation="false" title="$().cropper(&quot;crop&quot;)">
+					<span class="fa fa-check"> 选中</span>
+				</span>
+			</button>
+			<button type="button" class="btn btn-success" data-method="clear"
+				title="Clear">
+				<span class="docs-tooltip" data-toggle="tooltip"
+					data-animation="false" title="$().cropper(&quot;clear&quot;)">
+					<span class="fa fa-remove"> 清除</span>
+				</span>
+			</button>
+			<button type="button" class="btn btn-success" data-method="disable"
+				title="Disable">
+				<span class="docs-tooltip" data-toggle="tooltip"
+					data-animation="false" title="$().cropper(&quot;disable&quot;)">
+					<span class="fa fa-lock"> 锁定</span>
+				</span>
+			</button>
+			<button type="button" class="btn btn-success" data-method="enable"
+				title="Enable">
+				<span class="docs-tooltip" data-toggle="tooltip"
+					data-animation="false" title="$().cropper(&quot;enable&quot;)">
+					<span class="fa fa-unlock"> 解锁</span>
+				</span>
+			</button>
+			<button type="button" class="btn btn-success" data-method="reset"
+				title="Reset">
+				<span class="docs-tooltip" data-toggle="tooltip"
+					data-animation="false" title="$().cropper(&quot;reset&quot;)">
+					<span class="fa fa-refresh"> 重置</span>
+				</span>
+			</button>
+		</div>
+		<div class="pull-right">
+			<label class="btn btn-success btn-upload" for="inputImage"
+				title="Upload image file"> <input type="file"
+				class="sr-only" id="inputImage" name="file"
+				accept=".jpg,.jpeg,.png,.gif,.bmp,.tiff"> <span
+				class="docs-tooltip" data-toggle="tooltip" data-animation="false"
+				title="Import image with Blob URLs"> <span
+					class="fa fa-upload"> 选择头像</span>
+			</span>
+			</label>
+			<button type="button" id="saveAvatar" class="btn btn-success">
+				<i class="fa fa-floppy-o" aria-hidden="true"></i> 保存
+			</button>
+		</div>
+	</div>
+	<!-- /.box-footer -->
+</div>
+<!-- /.content-wrapper -->
+<script type="text/javascript">
+	nthTabs = $('#tabsId').nthTabs();
+
+	var isExists = function(id) {
+		var flag = false;
+		var tabList = nthTabs.getTabList();
+		$.each(tabList, function(index, element) {
+			if (element.id == '#' + id) {
+				flag = true;
+				return false;
+			}
+		});
+		return flag;
+	}
+
+	//active 是否激活状态，默认是  allowClose 是否可关闭，默认是 location 是否自动定位，默认是 fadeIn 是否开启淡入淡出效果，默认是
+	var clickAddTab = function(id, title, url, active, allowClose, location, fadeIn) {
+		if (isExists(id)) {
+			//存在则直接切换到指定选项卡
+			nthTabs.toggleTab(id);
+		} else {
+			//不存在则新建
+			nthTabs.addTab({
+				id : id,
+				title : title,
+				url : url,
+				active : active,
+				allowClose : allowClose,
+				location : location,
+				fadeIn : fadeIn
+			});
+		}
+	}
+
+	var editAvatar = function() {
+		layer.open({
+			type : 1,
+			title : '修改头像',
+			content : $('#editAvatarDiv')
+		});
+	}
+
+	var globalAvatar = '';
+
+	$(function() {
+		clickAddTab('menu-dashboard', '看板', '/dashboard', true, false, true, true);
+
+		$('.sidebar-menu a').on('click', function() {
+			var id = $(this).data('id');
+			var code = $(this).data('code');
+			var name = $(this).data('name');
+			var url = $(this).data('url');
+			var mtype = $(this).data('mtype');
+			if (mtype == 2) {
+				clickAddTab(String(id), name, url + '?code=' + code, true, true, true, true);
+			}
+		});
+
+		$('#inputImage').on('change', function() {
+			var avatar = $('#inputImage').val();
+			if (avatar != '') {
+				globalAvatar = avatar;
+			}
+		});
+
+		$('#saveAvatar').on('click', function() {
+			layer.confirm('确定保存？', {
+				icon : 3,
+				title : '提示'
+			}, function(index) {
+				if ($('#avatarCropper').prop('src') == '') {
+					layer.msg('请点击选择头像选择一张图片作为头像', {
+						icon : 5
+					});
+					return;
+				}
+				var avatarType = globalAvatar.substring(globalAvatar.lastIndexOf(".") + 1, globalAvatar.length);
+				var cas = $('#avatarCropper').cropper('getCroppedCanvas');//获取被裁剪后的canvas
+				var base64 = cas.toDataURL('image/' + avatarType).split(',')[1]; //转换为base64地址形式
+				var data = {
+					avatar : base64,
+					fileName : globalAvatar
+				};
+				$.post('/sys/user/editAvatar', data, function(result) {
+					if (result.success) {
+						window.location.href = "/";
+					} else {
+						layer.msg(result.errorMsg, {
+							icon : 5
+						});
+					}
+				}, 'json');
+			});
+		});
+	});
+</script>
+<script type="text/javascript"
+	th:src="@{/modules/cropper/cropper.feature.js}"></script>

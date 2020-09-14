@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common :: common('重置密码')">
+</head>
+<body class="hold-transition register-page">
+	<div class="register-box">
+		<div class="register-logo">
+			<a href="/">&copy;<b>XIXIWAN</b> platform
+			</a>
+		</div>
+		<div class="register-box-body">
+			<p class="login-box-msg">重置密码</p>
+
+			<form id="resetForm" action="/reset">
+				<div class="form-group">
+					<input type="radio" name="rtype" value="1" checked> 邮箱 <input
+						type="radio" name="rtype" value="2"> 手机
+				</div>
+				<div class="form-group">
+					<div class="input-group">
+						<div id="rvalueFa" class="input-group-addon">
+							<i class="fa fa-fw fa-envelope-square" aria-hidden="true"></i>
+						</div>
+						<input type="text" id="rvalue" name="rvalue" class="form-control"
+							placeholder="值"> <span class="input-group-btn">
+							<button type="button" class="btn btn-success btn-flat"
+								onclick="sendCaptcha(this);">
+								<i class="fa fa-fw fa-paper-plane" aria-hidden="true"></i>
+							</button>
+						</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="input-group">
+						<div class="input-group-addon">
+							<i class="fa fa-fw fa-shield" aria-hidden="true"></i>
+						</div>
+						<input type="text" name="captcha" class="form-control"
+							placeholder="验证码">
+					</div>
+				</div>
+
+				<div class="form-group">
+					<div class="input-group">
+						<div class="input-group-addon">
+							<i class="fa fa-fw fa-lock" aria-hidden="true"></i>
+						</div>
+						<input type="password" name="password" class="form-control"
+							placeholder="密码">
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="input-group">
+						<div class="input-group-addon">
+							<i class="fa fa-fw fa-lock" aria-hidden="true"></i>
+						</div>
+						<input type="password" name="retypePassword" class="form-control"
+							placeholder="重新输入密码">
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-4 pull-right">
+						<button type="submit" class="btn btn-success btn-block btn-flat">
+							<i class="fa fa-fw fa-floppy-o" aria-hidden="true"></i> 重置
+						</button>
+					</div>
+					<!-- /.col -->
+				</div>
+			</form>
+
+			<div class="row">
+				<div class="col-xs-6 ">
+					<a href="/login" class="pull-left">我已经记起密码了</a>
+				</div>
+			</div>
+		</div>
+		<!-- /.form-box -->
+	</div>
+	<!-- /.reset-box -->
+	<script type="text/javascript">
+		var countdown = 60;
+
+		var settime = function(obj) {
+			if (countdown == 0) {
+				$(obj).prop('disabled', false);
+				$(obj).html('<i class="fa fa-fw fa-paper-plane" aria-hidden="true"></i>');
+				countdown = 60;
+				return;
+			} else {
+				$(obj).prop('disabled', true);
+				$(obj).html('<i class="fa fa-fw fa-paper-plane" aria-hidden="true"></i> (' + countdown + ')');
+				countdown--;
+			}
+			setTimeout(function() {
+				settime(obj);
+			}, 1000);
+		};
+
+		var sendCaptcha = function(obj) {
+			var emailExpression = /^\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}$/;
+			var phoneExpression = /^1[3456789]\\d{9}$/;
+			var rtype = $('#resetForm input:radio[name=rtype]:checked').val();
+			var rvalue = $('#rvalue').val();
+			if (rtype == 1) {
+				if (!emailExpression.test(rvalue)) {
+					layer.msg('请输入正确的邮箱', {
+						icon : 5
+					});
+					return;
+				}
+			} else if (rtype == 2) {
+				if (!phoneExpression.test(rvalue)) {
+					layer.msg('请输入正确的手机号码', {
+						icon : 5
+					});
+					return;
+				}
+			}
+			settime(obj);
+			$.ajax({
+				type : 'post',
+				url : '/sendCaptcha',
+				data : {
+					rtype : rtype,
+					rvalue : rvalue
+				},
+				success : function(result) {
+					if (result.success) {
+						layer.msg(result.msg, {
+							icon : 6
+						});
+					} else {
+						layer.msg(result.errorMsg, {
+							icon : 5
+						});
+					}
+				}
+			});
+		};
+
+		$(function() {
+			$('input').iCheck({
+				checkboxClass : 'icheckbox_square-blue',
+				radioClass : 'iradio_square-blue',
+				increaseArea : '20%' /* optional */
+			});
+
+			$('#resetForm input:radio[name=rtype]').on('ifChecked', function() {
+				if (this.value == 1) {
+					$('#rvalueFa').html('<i class="fa fa-fw fa-envelope-square" aria-hidden="true"></i>');
+				} else if (this.value == 2) {
+					$('#rvalueFa').html('<i class="fa fa-fw fa-mobile" aria-hidden="true"></i>');
+				}
+			});
+
+			$('#resetForm').bootstrapValidator({
+				message : '这个值是无效的',
+				feedbackIcons : {
+					valid : 'fa fa-check',
+					invalid : 'fa fa-remove',
+					validating : 'fa fa-refresh'
+				},
+				fields : {
+					rvalue : {
+						validators : {
+							notEmpty : {}
+						}
+					},
+					captcha : {
+						validators : {
+							notEmpty : {}
+						}
+					},
+					password : {
+						validators : {
+							notEmpty : {},
+							identical : {
+								field : 'retypePassword',
+								message : '这两个密码不匹配'
+							}
+						}
+					},
+					retypePassword : {
+						validators : {
+							notEmpty : {},
+							identical : {
+								field : 'password',
+								message : '这两个密码不匹配'
+							}
+						}
+					}
+				}
+			}).on('success.form.bv', function(e) {
+				// Prevent form submission
+				e.preventDefault();
+
+				// Get the form instance
+				var $form = $(e.target);
+
+				// Get the BootstrapValidator instance
+				var bv = $form.data('bootstrapValidator');
+
+				layer.confirm('确定重置？', {
+					icon : 3,
+					title : '提示'
+				}, function(index) {
+					// Use Ajax to submit form data
+					$.post($form.attr('action'), $form.serialize(), function(result) {
+						if (result.success) {
+							layer.msg(result.msg, {
+								icon : 6
+							});
+						} else {
+							layer.msg(result.errorMsg, {
+								icon : 5
+							});
+						}
+					}, 'json');
+				});
+			});
+		});
+	</script>
+</body>
+</html>

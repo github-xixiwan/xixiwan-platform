@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.xixiwan.platform.sys.mapper.SysForgetMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap"
+		type="com.xixiwan.platform.sys.entity.SysForget">
+		<result column="id" property="id" />
+		<result column="userid" property="userid" />
+		<result column="rtype" property="rtype" />
+		<result column="rvalue" property="rvalue" />
+		<result column="captcha" property="captcha" />
+		<result column="used" property="used" />
+		<result column="expiredtime" property="expiredtime" />
+		<result column="createtime" property="createtime" />
+	</resultMap>
+
+	<!-- 通用查询结果列 -->
+	<sql id="Base_Column_List">
+		id, userid, rtype, rvalue, captcha, used, expiredtime, createtime
+	</sql>
+
+</mapper>

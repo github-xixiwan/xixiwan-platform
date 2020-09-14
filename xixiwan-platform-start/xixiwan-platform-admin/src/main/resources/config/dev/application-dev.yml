@@ -1,0 +1,43 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 106.14.132.211:8848
+        namespace: xixiwan-platform
+  datasource:
+    url: jdbc:mysql://106.14.132.211:3307/xixiwan_platform?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    hikari:
+      username: xixiwan
+      password: qgyxe5Ij7EeS
+  redis:
+    host: 106.14.132.211
+    port: 6379
+    timeout: 3000
+    database: 0
+    password: qgyxe5Ij7EeS
+    lettuce:
+      pool:
+        max-active: 8
+        min-idle: 0
+        max-idle: 8
+        max-wait: -1
+  thymeleaf:
+    cache: false
+mybatis-plus:
+  mapper-locations: classpath*:mapper/*/*Mapper.xml
+  global-config:
+    db-config:
+      id-type: AUTO
+      field-strategy: NOT_EMPTY
+      logic-delete-value: 0
+      logic-not-delete-value: 1
+      db-type: MYSQL
+    refresh: true
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+minio:
+  url: http://minio.xixiwan.cloud
+  accessKey: minioadmin
+  secretKey: minioadmin
+  bucketName: xixiwan-platform

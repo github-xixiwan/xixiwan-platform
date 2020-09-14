@@ -1,0 +1,11 @@
+<section class="content-header">
+	<h1>
+		<i th:class="'fa '+${sysMenu.icon}"></i><strong
+			th:text="' '+${sysMenu.name}"></strong> <small
+			th:text="${sysMenu.tips}"></small>
+	</h1>
+	<ol class="breadcrumb">
+		<li><strong th:text="${sysMenu.pname}"></strong></li>
+		<li class="active"><strong th:text="${sysMenu.name}"></strong></li>
+	</ol>
+</section>

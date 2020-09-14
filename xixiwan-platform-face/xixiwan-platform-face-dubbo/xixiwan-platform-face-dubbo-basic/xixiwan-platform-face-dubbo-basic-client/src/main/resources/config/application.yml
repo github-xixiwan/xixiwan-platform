@@ -1,0 +1,25 @@
+server:
+  port: 6011
+spring:
+  application:
+    name: face-dubbo-basic-client
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    default-property-inclusion: NON_NULL
+  profiles:
+    active: @profileActive@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: ALWAYS
+dubbo:
+  registry:
+    # 挂载到 Spring Cloud 注册中心
+    address: spring-cloud://localhost
+  cloud:
+    subscribed-services: face-dubbo-basic-service

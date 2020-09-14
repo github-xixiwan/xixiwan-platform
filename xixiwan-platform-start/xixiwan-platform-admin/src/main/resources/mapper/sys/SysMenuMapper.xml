@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xixiwan.platform.sys.mapper.SysMenuMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap"
+		type="com.xixiwan.platform.sys.entity.SysMenu">
+		<result column="id" property="id" />
+		<result column="code" property="code" />
+		<result column="name" property="name" />
+		<result column="pcode" property="pcode" />
+		<result column="icon" property="icon" />
+		<result column="url" property="url" />
+		<result column="num" property="num" />
+		<result column="levels" property="levels" />
+		<result column="mtype" property="mtype" />
+		<result column="tips" property="tips" />
+		<result column="color" property="color" />
+		<result column="status" property="status" />
+		<result column="isopen" property="isopen" />
+	</resultMap>
+
+	<!-- 通用查询结果列 -->
+	<sql id="Base_Column_List">
+		id, code, name, pcode, icon, url, num, levels, mtype,
+		tips, color, status, isopen
+	</sql>
+
+	<select id="selectUserMenuByForm"
+		parameterType="com.xixiwan.platform.sys.form.SysMenuForm"
+		resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM sys_menu
+		WHERE STATUS = 1
+		<if test="mtype != null">
+			AND mtype = #{mtype}
+		</if>
+		<if test="mtypeList != null and mtypeList.size > 0">
+			and mtype IN
+			<foreach collection="mtypeList" index="index" item="item"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="pcode != null and pcode != ''">
+			AND pcode = #{pcode}
+		</if>
+		AND id IN (SELECT
+		DISTINCT
+		menuid FROM sys_role_menu WHERE roleid IN (
+		SELECT
+		roleid
+		FROM
+		sys_user_role ur INNER JOIN sys_role r ON
+		ur.roleid=r.id AND r.STATUS= 1
+		WHERE
+		userid = #{userid})) ORDER BY num
+	</select>
+
+</mapper>
